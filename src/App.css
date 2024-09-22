@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Arimo&family=Inter:wght@400;600;700&family=Karla:wght@400;700&family=Manrope:wght@500&family=Nunito:wght@400;600;700;800;1000&family=Outfit:wght@300;400;600&family=Overpass:ital,wght@0,400;1,700&family=Pacifico&display=swap');
+
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Karla", sans-serif;
+  margin: 0;
+}
+
+
+.header {
+  padding: 0 10px ;
+  display: flex;
+  align-items: center;
+  background:  linear-gradient(90deg, #672280 1.18%, #A626D3 100%);
+}
+
+.header > p {
+  width: 140.792px;
+  color: #FFF; 
+  font-family: "Karla",sans-serif;
+  font-size: 20.748px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: -2px;
+}
+
+.logo {
+  margin-right: 6px;
+  /* border: 1px solid red; */
+  width:40px ;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("../public/images/TrollFace.svg");
+}
+
+
+.form {
+ display: grid;
+ padding: 8px;
+ grid-template: 40px 40px / 1fr 1fr ;
+ gap: 8px;
+ border:1px solid blue;
+}
+
+button {
+  grid-column: 1/-1;
+}
+
+.memeCon {
+  grid-column: 1/-1;
+  border: 1px solid red;
+  position: relative;
+}
+
+.memeCon  img {
+  width: 80%;
+  border: 1px solid green;
+  height: 100%;
+}
+
+.bottom {
+  bottom: 0;
+}
+
+.top {
+  top: 0;
+}
+.meme--text {
+  position: absolute;
+  width: 80%;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 15px 0;
+  padding: 0 5px;
+  font-family: impact, sans-serif;
+  font-size: 2em;
+  text-transform: uppercase;
+  color: white;
+  letter-spacing: 1px;
+  text-shadow:
+      2px 2px 0 #000,
+      2px 2px 0 #000,
+      2px 2px 0 #000,
+      2px 2px 0 #000,
+      2px 2px 0 #000,
+      3px 3px 0 #000,
+      -2px -2px 0 #000,
+      -2px -2px 0 #000,
+      -2px -2px 0 #000,
+      -2px -2px 0 #000,
+      -2px -2px 0 #000;
+}
