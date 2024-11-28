@@ -353,15 +353,22 @@ export default function Form() {
 }
 ```
 
-#### Controlled Components
+Here’s a cleaned-up and properly formatted version of your markdown:
 
-[article](https://legacy.reactjs.org/docs/forms.html)
+---
 
-In HTML, form elements such as <input>, <textarea>, and <select> typically maintain their own state and update it based on user input.
-In React, mutable state is typically kept in the state property of components, and only updated with setState().
-We can combine the two by making the React state be the “single source of truth”. Then the React component that renders a form also controls what happens in that form on subsequent user input. An input form element whose value is controlled by React in this way is called a “controlled component”.
+### Controlled Components
 
-a good practic in react that is to make our react state is what drive the state that visible inside the input box and that by adding value property to each one of our properties and then set it to the piece of state that match it .
+[React Documentation: Controlled Components](https://legacy.reactjs.org/docs/forms.html)
+
+In HTML, form elements such as `<input>`, `<textarea>`, and `<select>` typically maintain their own state and update it based on user input.  
+
+In React, mutable state is typically kept in the state property of components and only updated with `setState()`.  
+
+To make the React state the “single source of truth,” we can control form elements through React by assigning a `value` property tied to the state. This ensures the React component renders and controls the form on subsequent user input.  
+An input form element controlled in this way is called a **“controlled component.”**
+
+Good practice in React is to let React's state drive the input box value. By adding the `value` property to an input element and tying it to a matching state property, we can achieve this.
 
 ```jsx
 import React from "react";
@@ -375,14 +382,13 @@ export default function Form() {
     employment: "",
   });
 
-  // we put the name of input element in way that match proeprties inside the object
+  // Handle input changes and update the corresponding state property
   function handleChange(event) {
-    setFormData((prevFormData) => {
-      return {
-        ...prevFormData,
-        [event.target.name]: event.target.value,
-      };
-    });
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   }
 
   return (
@@ -418,22 +424,16 @@ export default function Form() {
       />
       <label htmlFor="isFriendly">Are you friendly?</label>
       <br />
-      <br />
 
       <fieldset>
-        <legend>Current employment status</legend>
-
+        <legend>Current Employment Status</legend>
         <input
           type="radio"
           id="unemployed"
           name="employment"
-          // when user click one of the radio  buttons will take the the value of that specific radio button that have been clicked
           value="unemployed"
-          // and set our state to that value in order to associate input with the correct piece of state, and also to prevent selecting more than on radio button we add the same name for all radio buttons
-
-          // ! Radio buttons controlled in the same way that check boxes controlled state.
-          //employment === value of the check box  and now react in charge of control radio box rather of the input having it own html state
           checked={formData.employment === "unemployed"}
+          onChange={handleChange}
         />
         <label htmlFor="unemployed">Unemployed</label>
         <br />
@@ -444,31 +444,31 @@ export default function Form() {
           name="employment"
           value="part-time"
           checked={formData.employment === "part-time"}
+          onChange={handleChange}
         />
         <label htmlFor="part-time">Part-time</label>
         <br />
 
         <input
-          checked={formData.employment === "full-time"}
           type="radio"
           id="full-time"
           name="employment"
           value="full-time"
+          checked={formData.employment === "full-time"}
+          onChange={handleChange}
         />
         <label htmlFor="full-time">Full-time</label>
-        <br />
       </fieldset>
 
       <label htmlFor="favColor">What is your favorite color?</label>
       <br />
       <select
         id="favColor"
+        name="favColor"
         value={formData.favColor}
         onChange={handleChange}
-        name="favColor"
       >
-        <option value="">-- Choose --</option>// adding it for empty string that
-        we initialize it in the state
+        <option value="">-- Choose --</option>
         <option value="red">Red</option>
         <option value="orange">Orange</option>
         <option value="yellow">Yellow</option>
@@ -482,55 +482,44 @@ export default function Form() {
 }
 ```
 
-visually there is no change but conceptially when we type to input "something" the value of input now it is no longer controlled by input but rather by react. every change that i make run my handle function whihc then update the correct piece of state which reRender form and sets the value of form input to be what ever state is
-The main reason to learn it is because if we don't set this up correctly React might complain about having uncontrolled component
+Visually, the form behaves the same, but conceptually, React now controls the inputs' state. When you type into an input, the `handleChange` function updates the state, triggering a re-render of the form with the updated state values.
 
-#### submitting the form
+The main benefit of controlled components is that React warns you about **uncontrolled components** if inputs are not properly managed.
 
-what is nice about the way we have setup our form in React its now istead of having to go through every one of our inputs and gather the values right at the last second before we submit them to api , we do all that work all along as we have been updated state on every change of the input elements in our form
+---
+
+### Submitting the Form
+
+A significant advantage of this setup is that you don’t need to gather input values when submitting the form. The state is already up-to-date with the user’s input.
 
 ```jsx
 function handleSubmit(event) {
   event.preventDefault();
   submitToApi(formData);
-  console.log;
 }
 ```
 
-<br/>
+---
 
-### [Use Effect](https://overreacted.io/a-complete-guide-to-useeffect/)
+### [useEffect](https://overreacted.io/a-complete-guide-to-useeffect/)
 
-![Alt text](image.png)
+![Example](image.png)
 
-<br/>
+Side effects include interacting with systems outside React's scope, such as local storage or APIs.
 
-![Alt text](image-1.png)
+#### Making API Calls with `useEffect`
 
-<!-- side effects  is any thing that live outside of react reach -we can access local storage but react has no  hand in interfacing with local storage  , api interactions -->
+When working with APIs in React, the process typically involves:  
+1. Fetching data from the API.  
+2. Storing that data in state.
 
-#### Making Api calls
-
-A very common thing we need to do in react is interact with api that lives outside of our application usually what we doing is request information from api or some times submitting informations to api when ever we request informations from api in react we usually gonna use that informations some how so getting data from api in react can be split into essentially two parts
-
-1. get the data (fetch or another tool like axios)
-2. save the data into state
-
-> Is Broken to do things this way
+Here’s an example where improper placement of the `fetch` call leads to an **infinite loop**:
 
 ```jsx
 import React from "react";
 
 export default function App() {
   const [starWarsData, setStarWarsData] = React.useState({});
-
-  // 1. GET the data (fetch)
-  // 2. Save the data to state
-  console.log("component render"); //every time this component  render or re renders by react  is gonna run this console log which gonna give us
-
-  // an infinite loop of  component rendering but why???
-
-  //because  fetch live in sorta top level of our component because of that  any time the component renders is gonna call fetch which gonna re set  the State which updating our component which causig REACT to  rerender the component and then => running fetch again => setting the state => re rendering the component => calling fetch again setting the state => re rendering the component .....
 
   fetch("https://swapi.dev/api/people/1")
     .then((res) => res.json())
@@ -544,55 +533,35 @@ export default function App() {
 }
 ```
 
-#### useEffect syntax and default behavior
+### Fixing Infinite Loop with `useEffect`
 
-**useEffect** : is a tool that react has given us to use like kind of blank canvas that allows us to interact out side of REACT ecosystem (which is mostly just consist of state props and UI)
-or we can think about it like way to asynchronize REACT state with those outside systems
-
-useEffect has one required parameter and an optional second parameter
-
-- Required Parameter
-
-  the required first parameter for 'useEffect' is a callBackFunction
-  and this function act as place for us to be able to put our side effects code.
+To fix this, we can use `useEffect` to control when the fetch request runs.  
 
 ```jsx
-import React from "react"
+import React from "react";
 
 export default function App() {
-    const [starWarsData, setStarWarsData] = React.useState({})
+  const [starWarsData, setStarWarsData] = React.useState({});
 
-    console.log("Component rendered")
+  React.useEffect(() => {
+    fetch("https://swapi.dev/api/people/1")
+      .then((res) => res.json())
+      .then((data) => setStarWarsData(data));
+  }, []); // Empty dependency array ensures this effect runs only once.
 
-    // in example above fetch request is considered a side effect and that because it's reaching outside  of react ecosystem  but also try to set some state  in the process which was infinitelly looping so we move it inside useEffect
-
-    // side effects
-    React.useEffect(function() {
-      // in this function we allowed to put our code that has  other side effect that interact  with systems outside  of react
-      //  in maybe more specifically  interact with those outside systems to keep them  in sync with our local state in this  component
-
-
-        fetch("https://swapi.dev/api/people/1")
-            .then(res => res.json())
-            // .then(data => setStarWarsData(data))
-    }, ???) //??? is the seconde parameter place but why we need it  and what it is and how it solve the problem
-
-    return (
-        <div>
-            <pre>{JSON.stringify(starWarsData, null, 2)}</pre>
-        </div>
-    )
+  return (
+    <div>
+      <pre>{JSON.stringify(starWarsData, null, 2)}</pre>
+    </div>
+  );
 }
-
-//  after moving fetch into callback funtion inside useEffect  we still having the same  problem we were having before where we're stuck in an infinite loop
-// it turns out that the code  we put inside callback function  if we don't provide a seconde parameter to our react.useEffect  then there is almost no different  between putting our code inside useEffect or  outside of it
-
-// there is one small different that is any thing that we  put  inside callback function  is guarantee to run only  after the user interface has been painted  to the screen (only after react has taken our user interface and created real elements  on  our page )
 ```
 
-#### useEffect CleanUp Funciton
+---
 
-useEffect take two parameters the 1st one is the EFFECT that we wanna run , _the 2nd one is any dependencies that React should watch for changes in to re-run our effect function_ and that effect function is allow to return another function that can cleanup after any side effects that maybe lingering in case our component die
+### `useEffect` Cleanup Function
+
+`useEffect` can also clean up side effects to prevent resource leaks.  
 
 ```jsx
 import React from "react";
@@ -601,16 +570,14 @@ export default function WindowTracker() {
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
   React.useEffect(() => {
-    function watchWidth() {
-      console.log("Setting up...");
+    function handleResize() {
       setWindowWidth(window.innerWidth);
     }
 
-    window.addEventListener("resize", watchWidth);
+    window.addEventListener("resize", handleResize);
 
-    return function () {
-      console.log("Cleaning up...");
-      window.removeEventListener("resize", watchWidth);
+    return () => {
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -618,55 +585,17 @@ export default function WindowTracker() {
 }
 ```
 
-#### Using an async function inside useEffect
+---
 
-we wouldn't be able to simply put "async" in front of our callBackFunction for useEffect and that because (async alter that way function is fuction ) what ever we return from async fuction is not gonna be pair value return that we can receive in a variable when we call this function but instead an Async function will automatically and always return a promise
+### Accessibility Best Practices
 
-as we writing our async function what ever we say should be returned is actually what will be resolved as the successful promise completion of async function
+- Ensure all elements are keyboard-focusable.  
+- Use `aria-label` for buttons without visible text to describe their functionality.  
+- Use `aria-pressed` for toggling buttons to indicate state.  
+- Always add `alt` text for images.  
+- Use `<button>` tags for clickable areas.
 
-however since REACT is expecting the return value from async function to be another function which can use to clean up any side effects that we create in the process of running my effect , if what it receive istead is promise it's not gonna be able to run our clean up the way we want it to
-
-```jsx
-import React from "react"
-
-export default function Meme() {
-
-    })
-    const [allMemes, setAllMemes] = React.useState([])
-
-    /**
-    useEffect takes a function as its parameter. If that function
-    returns something, it needs to be a cleanup function. Otherwise,
-    it should return nothing. If we make it an async function, it
-    automatically retuns a promise instead of a function or nothing.
-    Therefore, if you want to use async operations inside of useEffect,
-    you need to define the function separately inside of the callback
-    function, as seen below:
-    */
-
-    React.useEffect(() => {
-        async function getMemes() {
-            const res = await fetch("https://api.imgflip.com/get_memes")
-            const data = await res.json()
-            setAllMemes(data.data.memes)
-        }
-        getMemes()
-    }, [])
-
-
-}
-
-```
-
-### accessibility
-
-- make sure that all things is tab focusable for keyboard users
-
-- when we have button that doesn't have eligible text inside it will important for us to adding aria-label to it which is use to describe the function of button that it should have if this button get triggered ,another aria attribute is aria-pressed is acting like toggle so is essentially on or off so we can indicate to screen readers whether or not is correctly pressed
-
-- always add alt text to you images
-
-- make sure you using button tag for clickable areas
+Example:
 
 ```jsx
 export default function Star(props) {
@@ -683,7 +612,7 @@ export default function Star(props) {
     >
       <img
         src={`../images/${starIcon}`}
-        alt="star icon."
+        alt="Star icon"
         className="card--favorite"
       />
     </button>
