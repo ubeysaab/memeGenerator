@@ -155,9 +155,9 @@ so passing a function from parent into child component allow child component to 
 
 there is no way to pass data from one sibling component to another comnponent and there is no way to pass data upward in react
 the child component has no idea about sibling or ants uncles components existing
-![no way to pass data between siblings or upwards](./images/NoUp.png)
+![no way to pass data between siblings or upwards](../images/image-1.png)
 so the only solution we have raise state up a level, and we pass more props downward
-![Alt text](./images/onlyDown.png)
+![Alt text](../images/image.png)
 
 over time this can be very tedious especially if your state ends up raising up multiple levels above the component that need it in which case react does offer solution to this called  
 context and there is 3rd party state management system like Redux that help to solve this problem
@@ -503,12 +503,10 @@ function handleSubmit(event) {
 
 ### [useEffect](https://overreacted.io/a-complete-guide-to-useeffect/)
 
-![Example](./images/image.png)
+![Example](image.png)
 
 Side effects include interacting with systems outside React's scope, such as local storage or APIs.
 
-
-![SideEffects](./images/image-1.png)
 #### Making API Calls with `useEffect`
 
 When working with APIs in React, the process typically involves:  
@@ -597,7 +595,7 @@ export default function WindowTracker() {
 - Always add `alt` text for images.  
 - Use `<button>` tags for clickable areas.
 
-
+Example:
 
 ```jsx
 export default function Star(props) {
