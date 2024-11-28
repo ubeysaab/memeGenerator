@@ -18,6 +18,14 @@
   - [Controlled Components](#controlled-components)
   - [Submitting the form](#submitting-the-form)
   - [useId](https://react.dev/reference/react/useId#generating-ids-for-several-related-elements)
+- [UseEffect](#useeffect)
+  - [Making Api Calls With UseEffect](#making-api-calls-with-useeffect)
+  - [Infinite loop in use Effect](#fixing-infinite-loop-with-useeffect)
+  - [Use Effect CleanUp function](#useeffect-cleanup-function)
+  - [Using An Async function inside UseEffect](#using-an-async-function-inside-useeffect)
+
+
+- [Accessibility Best Practices](#accessibility-best-practices)
 
 ### difference between static web site and Dynamic web app
 
@@ -357,7 +365,7 @@ Here’s a cleaned-up and properly formatted version of your markdown:
 
 ---
 
-### Controlled Components
+#### Controlled Components
 
 [React Documentation: Controlled Components](https://legacy.reactjs.org/docs/forms.html)
 
@@ -488,7 +496,7 @@ The main benefit of controlled components is that React warns you about **uncont
 
 ---
 
-### Submitting the Form
+#### Submitting the Form
 
 A significant advantage of this setup is that you don’t need to gather input values when submitting the form. The state is already up-to-date with the user’s input.
 
@@ -535,7 +543,7 @@ export default function App() {
 }
 ```
 
-### Fixing Infinite Loop with `useEffect`
+#### Fixing Infinite Loop with `useEffect`
 
 To fix this, we can use `useEffect` to control when the fetch request runs.  
 
@@ -561,9 +569,11 @@ export default function App() {
 
 ---
 
-### `useEffect` Cleanup Function
+#### `useEffect` Cleanup Function
 
-`useEffect` can also clean up side effects to prevent resource leaks.  
+
+
+`useEffect` u take two parameters the 1st one is the effect that we wanna run , _the 2nd one is any dependencies that React should watch for changes in to re-run our effect function_ and that effect function is allow to return another function that can cleanup after any side effects that maybe lingering in case our component die, and can prevent memory lake
 
 ```jsx
 import React from "react";
@@ -587,13 +597,61 @@ export default function WindowTracker() {
 }
 ```
 
+
+#### Using an async function inside `useEffect`
+
+we wouldn't be able to simply put "async" in front of our callBackFunction for useEffect and that because (async alter that way function is fuction ) what ever we return from async fuction is not gonna be pair value return that we can receive in a variable when we call this function but instead an Async function will automatically and always return a promise
+
+as we writing our async function what ever we say should be returned is actually what will be resolved as the successful promise completion of async function
+
+however since REACT is expecting the return value from async function to be another function which can use to clean up any side effects that we create in the process of running my effect , if what it receive istead is promise it's not gonna be able to run our clean up the way we want it to
+
+```jsx
+import React from "react"
+
+export default function Meme() {
+
+    
+    const [allMemes, setAllMemes] = React.useState([])
+
+    /**
+    useEffect takes a function as its parameter. If that function
+    returns something, it needs to be a cleanup function. Otherwise,
+    it should return nothing. If we make it an async function, it
+    automatically retuns a promise instead of a function or nothing.
+    Therefore, if you want to use async operations inside of useEffect,
+    you need to define the function separately inside of the callback
+    function, as seen below:
+    */
+
+    React.useEffect(() => {
+        async function getMemes() {
+            const res = await fetch("https://api.imgflip.com/get_memes")
+            const data = await res.json()
+            setAllMemes(data.data.memes)
+        }
+        getMemes()
+    }, [])
+
+
+}
+
+```
+
+
+
+
+
+
+
+
 ---
 
 ### Accessibility Best Practices
 
 - Ensure all elements are keyboard-focusable.  
 - Use `aria-label` for buttons without visible text to describe their functionality.  
-- Use `aria-pressed` for toggling buttons to indicate state.  
+- Use `aria-pressed` for toggling buttons to indicate state pressed or not.  
 - Always add `alt` text for images.  
 - Use `<button>` tags for clickable areas.
 
