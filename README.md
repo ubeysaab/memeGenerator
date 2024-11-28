@@ -205,7 +205,7 @@ export default function App() {
 
 [Derived State](https://legacy.reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html)
 giving each component the ability of change props that coming from the parent by initialize state based on coming props inside the component. this way not gonna change things in the actually object and any change you gonna do it 'll have no effect when you click refresh (example mark some thing as favorite in E-commerce website)
-![passing prop and make it state inside each compo](../images/image-2.png)
+![passing prop and make it state inside each compo](./images/image-2.png)
 
 in onClick event we really not get to decide what parameter get passed to our function every browser will pass an event handler function ,the Event it self (event object that describe a bunch of informations about the event)
 
@@ -232,7 +232,7 @@ export default function App() {
 // above code will give us :  SyntheticBaseEvent
 
 // How ever we can work around this by  instead by running props.toggle in box component we can run our own function which then run props.toggle
- onClick={()=>props.toggle(id)}
+ onClick={()=>props.toggle(id)}}
 ```
 
 onClick={()=>props.toggle(id)} when we wanna pass a parameter to function that passed as props we use this syntax
